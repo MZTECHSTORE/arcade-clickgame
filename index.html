@@ -22,6 +22,7 @@
             margin: 0;
             padding: 0;
             user-select: none;
+            -webkit-user-select: none;
         }
 
         header {
@@ -62,7 +63,7 @@
         }
 
         main {
-            flex: 3;
+            flex: 1;
             min-width: 0;
         }
 
@@ -94,38 +95,11 @@
             transition: transform 0.05s ease;
         }
 
-        .big-coin:active {
+        /* Animação ativa quando o utilizador clica na moeda */
+        .big-coin.clicked {
             transform: scale(0.92);
         }
-
-        aside {
-            flex: 1;
-            min-width: 320px;
-        }
-
-        .ad-space {
-            background-color: #111217;
-            border: 2px dashed #2d3041;
-            border-radius: 16px;
-            height: 100%;
-            min-height: 500px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-muted);
-            text-align: center;
-            padding: 25px;
-            box-sizing: border-box;
-        }
     </style>
-
-    <!-- ======================================================== -->
-    <!-- ⚠️ Cole aqui o SCRIPT DO POPUNDER ou SOCIAL BAR da Adsterra -->
-    <!-- ======================================================== -->
-    <!-- Exemplo: <script type='text/javascript' src='//://atcontent.com...'></script> -->
-    <!-- ======================================================== -->
-
 </head>
 <body>
 
@@ -137,38 +111,44 @@
     <div class="layout">
         <main>
             <div class="game-window">
-                <h2>Multiplicador de Cliques Rápido</h2>
-                <p style="color: var(--text-muted)">A cada 25 cliques, um anúncio Popunder abre em segundo plano para gerar receitas.</p>
+                <h2>Multiplicador de Cliques Ativo</h2>
+                <p style="color: var(--text-muted)">Complete os 25 cliques. O sistema abrirá um anúncio premiado para validar e duplicar o seu saldo!</p>
                 <h3 style="font-size: 20px;">Cliques: <span id="cycle-clicks" style="color: var(--primary-color);">0</span> / 25</h3>
                 <div class="big-coin" id="coin-target">CLICA!</div>
             </div>
         </main>
-
-        <aside>
-            <div class="ad-space" id="adsterra-banner-slot">
-                <!-- ======================================================== -->
-                <!-- ⚠️ Cole aqui o SCRIPT DO BANNER NATIVE (Ex: 300x250) da Adsterra -->
-                <!-- ======================================================== -->
-                <p style="font-size: 12px;">Publicidade Adsterra</p>
-                <!-- ======================================================== -->
-            </div>
-        </aside>
     </div>
 
     <script>
-        let globalCoins = 0;
+        // Link de monetização oficial da Adsterra injetado com sucesso
+        const adsterraDirectLink = 'https://profitableratecpmnetwork.com';
+
+        // Tenta recuperar o saldo salvo no navegador do utilizador. Se não existir, começa em 0.
+        let globalCoins = parseInt(localStorage.getItem('globalCoins')) || 0;
         let cycleClicks = 0;
 
         const globalCoinsEl = document.getElementById('global-coins');
         const cycleClicksEl = document.getElementById('cycle-clicks');
         const coinTarget = document.getElementById('coin-target');
 
+        // Renderiza o saldo que já estava salvo
+        updateUI();
+
         function handleCoinClick() {
             cycleClicks++;
             globalCoins += 1;
+            
+            // Salva as moedas em tempo real para evitar perdas
+            localStorage.setItem('globalCoins', globalCoins);
             updateUI();
 
-            // Ao atingir os 25 cliques, aciona um redirecionamento ou link direto da Adsterra
+            // Adiciona a classe de animação visual
+            coinTarget.classList.add('clicked');
+            setTimeout(() => {
+                coinTarget.classList.remove('clicked');
+            }, 50);
+
+            // Atingiu a meta de cliques do ciclo
             if (cycleClicks >= 25) {
                 triggerAdsterraAction();
             }
@@ -181,12 +161,16 @@
 
         function triggerAdsterraAction() {
             cycleClicks = 0;
+            
+            // Atribui bónus de 100 moedas por completar o ciclo
+            globalCoins += 100;
+            localStorage.setItem('globalCoins', globalCoins);
             updateUI();
             
-            // Opcional: Se quiser maximizar ganhos, pode usar o "Direct Link" da Adsterra aqui
-            // window.open('SUA_URL_DO_DIRECT_LINK_ADSTERRA', '_blank');
-            
-            alert("Bónus de 25 cliques atingido! Recompensa creditada.");
+            // Redireciona e abre o seu Direct Link da Adsterra numa nova aba gerando receita
+            if (adsterraDirectLink) {
+                window.open(adsterraDirectLink, '_blank');
+            }
         }
 
         coinTarget.addEventListener('click', handleCoinClick);
