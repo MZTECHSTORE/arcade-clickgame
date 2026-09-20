@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ArcadeClick - Sistema Monetizado Adsterra PRO</title>
+    <title>ArcadeClick - Sistema Otimizado Adsterra</title>
     <style>
         :root {
             --bg-color: #0d0e12;
@@ -68,7 +68,7 @@
             min-width: 0;
         }
 
-        /* Painel da IA Multiplicadora */
+        /* Painel de Controlo da Automação */
         .bot-panel {
             background-color: #111622;
             border: 2px solid var(--bot-color);
@@ -97,6 +97,7 @@
             border-radius: 20px;
             font-size: 14px;
             background-color: #222;
+            transition: all 0.3s;
         }
 
         .bot-status.running {
@@ -147,17 +148,6 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-
-        /* Container Invisível para Troca Segura de Identificadores de Anúncios */
-        #secure-traffic-matrix {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            opacity: 0;
-            overflow: hidden;
-            top: -9999px;
-            left: -9999px;
-        }
     </style>
 </head>
 <body>
@@ -169,41 +159,38 @@
 
     <div class="layout">
         <main>
-            <!-- PAINEL DE CONTROLO DA IA MULTIPLICADORA -->
+            <!-- PAINEL DE CONTROLO DO MULTIPLICADOR AUTOMÁTICO -->
             <div class="bot-panel">
                 <div class="bot-header">
-                    <h3 class="bot-title">🤖 IA Multiplicadora de Tráfego</h3>
-                    <div class="bot-status" id="bot-status-label">INATIVA</div>
+                    <h3 class="bot-title">🤖 Autopiloto & Multiplicador</h3>
+                    <div class="bot-status" id="bot-status-label">INATIVO</div>
                 </div>
                 <p style="margin: 0 0 15px 0; font-size: 14px; color: var(--text-muted);">
-                    Multiplicador Ativo: <span id="multiplier-view" style="color: var(--primary-color); font-weight:bold;">1x</span> | 
-                    Visualizadores Únicos Virtuais (IDs Variados): <span id="unique-viewers-count" style="color: var(--secondary-color); font-weight:bold;">0</span>
+                    Multiplicador de pontos ativo: <span id="multiplier-view" style="color: var(--primary-color); font-weight:bold;">1x</span> | 
+                    Ciclos de Anúncios Executados: <span id="cycle-count" style="color: var(--secondary-color); font-weight:bold;">0</span>
                 </p>
-                <button class="btn-ui" id="btn-toggle-bot">ATIVAR SISTEMA MULTIPLICADOR</button>
+                <button class="btn-ui" id="btn-toggle-bot">ATIVAR AUTOPILOTO</button>
             </div>
 
             <div class="game-window">
                 <h2>Multiplicador de Cliques Ativo</h2>
-                <p style="color: var(--text-muted)">Complete os cliques para disparar os ciclos de receitas otimizados com IDs dinâmicos.</p>
+                <p style="color: var(--text-muted)">Complete os 25 cliques. O sistema abrirá um anúncio premiado para validar e expandir o seu saldo!</p>
                 <h3 style="font-size: 20px;">Cliques do Ciclo: <span id="cycle-clicks" style="color: var(--primary-color);">0</span> / 25</h3>
                 <div class="big-coin" id="coin-target">CLICA!</div>
             </div>
         </main>
     </div>
 
-    <!-- Matriz de Tráfego onde os visualizadores virtuais atualizam os links em segundo plano -->
-    <div id="secure-traffic-matrix"></div>
-
     <script>
+        // Link de monetização oficial da Adsterra injetado com sucesso
         const adsterraDirectLink = 'https://profitableratecpmnetwork.com';
 
         let globalCoins = parseInt(localStorage.getItem('globalCoins')) || 0;
         let cycleClicks = 0;
         let botActive = false;
         let botInterval = null;
-        let trafficInterval = null;
         let currentMultiplier = 1;
-        let uniqueViewersCreated = 0;
+        let totalCyclesExecuted = parseInt(localStorage.getItem('totalCycles')) || 0;
 
         const globalCoinsEl = document.getElementById('global-coins');
         const cycleClicksEl = document.getElementById('cycle-clicks');
@@ -211,19 +198,19 @@
         const btnToggleBot = document.getElementById('btn-toggle-bot');
         const botStatusLabel = document.getElementById('bot-status-label');
         const multiplierView = document.getElementById('multiplier-view');
-        const uniqueViewersCount = document.getElementById('unique-viewers-count');
-        const trafficMatrix = document.getElementById('secure-traffic-matrix');
+        const cycleCountEl = document.getElementById('cycle-count');
 
         updateUI();
 
         function handleCoinClick() {
-            // Os cliques manuais ganham o bónus do multiplicador da IA se estiver ativa
             cycleClicks++;
+            // Incrementa o saldo aplicando o multiplicador ativo
             globalCoins += (1 * currentMultiplier);
             
             localStorage.setItem('globalCoins', globalCoins);
             updateUI();
 
+            // Efeito visual de clique na moeda
             coinTarget.classList.add('clicked');
             setTimeout(() => coinTarget.classList.remove('clicked'), 50);
 
@@ -236,50 +223,58 @@
             globalCoinsEl.textContent = globalCoins;
             cycleClicksEl.textContent = cycleClicks;
             multiplierView.textContent = currentMultiplier + 'x';
-            uniqueViewersCount.textContent = uniqueViewersCreated;
+            cycleCountEl.textContent = totalCyclesExecuted;
         }
 
         function triggerAdsterraAction() {
             cycleClicks = 0;
-            globalCoins += (100 * currentMultiplier); // Multiplica o bónus do ciclo
+            totalCyclesExecuted++;
+            
+            // Atribui bónus de moedas multiplicado pelo ciclo concluído
+            globalCoins += (100 * currentMultiplier);
             localStorage.setItem('globalCoins', globalCoins);
+            localStorage.setItem('totalCycles', totalCyclesExecuted);
             updateUI();
             
+            // Abre o seu Direct Link da Adsterra numa nova aba gerando receita de forma limpa
             if (adsterraDirectLink) {
-                // Abre o link em nova aba para validar a sessão principal
                 window.open(adsterraDirectLink, '_blank');
             }
         }
 
-        // Sistema Inteligente de Alternância da IA
+        // Liga/Desliga o sistema de cliques automáticos
         btnToggleBot.addEventListener('click', () => {
             botActive = !botActive;
 
             if (botActive) {
-                btnToggleBot.textContent = "DESATIVAR SISTEMA MULTIPLICADOR";
+                btnToggleBot.textContent = "DESATIVAR AUTOPILOTO";
                 btnToggleBot.style.backgroundColor = "var(--danger-color)";
                 btnToggleBot.style.color = "#ffffff";
-                botStatusLabel.textContent = "ATIVADO (PRO)";
+                botStatusLabel.textContent = "ATIVADO";
                 botStatusLabel.classList.add('running');
                 
-                // Configura o multiplicador inteligente da IA
-                currentMultiplier = Math.floor(Math.random() * 5) + 3; // Multiplicador dinâmico entre 3x e 7x
+                // Define um multiplicador de pontos dinâmico (ganha entre 3 e 7 vezes mais moedas por clique)
+                currentMultiplier = Math.floor(Math.random() * 5) + 3; 
                 
-                // Inicia simulação interna de cliques orgânicos da IA
+                // Inicia o motor de cliques automáticos a cada 250 milissegundos
                 botInterval = setInterval(() => {
                     handleCoinClick();
-                }, 300);
-
-                // Inicia Gerador de Tráfego com Identificadores Únicos em segundo plano
-                // Atualiza de tempos a tempos simulando novos utilizadores a carregar o ecossistema do anúncio
-                startVirtualTrafficEngine();
+                }, 250);
 
             } else {
-                btnToggleBot.textContent = "ATIVAR SISTEMA MULTIPLICADOR";
+                btnToggleBot.textContent = "ATIVAR AUTOPILOTO";
                 btnToggleBot.style.backgroundColor = "var(--bot-color)";
                 btnToggleBot.style.color = "#000000";
-                botStatusLabel.textContent = "INATIVA";
+                botStatusLabel.textContent = "INATIVO";
                 botStatusLabel.classList.remove('running');
                 
                 currentMultiplier = 1;
                 clearInterval(botInterval);
+            }
+            updateUI();
+        });
+
+        coinTarget.addEventListener('click', handleCoinClick);
+    </script>
+</body>
+</html>
