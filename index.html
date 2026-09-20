@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArcadeClick - Sistema Seguro Google AdSense</title>
+    <style>
+        :root {
+            --bg-color: #0d0e12;
+            --card-color: #16171e;
+            --primary-color: #00ff88;
+            --secondary-color: #ffb700;
+            --danger-color: #ff4757;
+            --text-color: #ffffff;
+            --text-muted: #8b8d99;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        header {
+            background-color: var(--card-color);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #232530;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 26px;
+            color: var(--primary-color);
+        }
+
+        .wallet {
+            background: linear-gradient(135deg, #1e202c, #2a2d3d);
+            padding: 12px 25px;
+            border-radius: 50px;
+            border: 1px solid var(--secondary-color);
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .wallet span {
+            color: var(--secondary-color);
+        }
+
+        .layout {
+            display: flex;
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+            gap: 30px;
+        }
+
+        main {
+            flex: 3;
+            min-width: 0;
+        }
+
+        .game-window {
+            background-color: var(--card-color);
+            border-radius: 16px;
+            padding: 35px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            border: 1px solid #1f202b;
+            min-height: 400px;
+        }
+
+        .big-coin {
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, #ffe066 0%, #f5b000 70%, #c48d00 100%);
+            border-radius: 50%;
+            margin: 40px auto;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 22px;
+            color: #4a3500;
+            border: 5px solid #fff;
+            box-shadow: 0 15px 35px rgba(245, 176, 0, 0.4);
+            transition: transform 0.05s ease;
+        }
+
+        .big-coin:active {
+            transform: scale(0.92);
+        }
+
+        aside {
+            flex: 1;
+            min-width: 320px;
+        }
+
+        .ad-space {
+            background-color: #111217;
+            border: 2px dashed #2d3041;
+            border-radius: 16px;
+            height: 100%;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 25px;
+            box-sizing: border-box;
+        }
+
+        /* Pop-up de Anúncio */
+        .ad-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(5, 5, 8, 0.98);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .ad-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .ad-modal {
+            background-color: var(--card-color);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 550px;
+            width: 90%;
+            border: 2px solid var(--primary-color);
+        }
+
+        /* Espaço onde a Google vai injetar o anúncio real */
+        .google-rewarded-slot {
+            background-color: #000;
+            height: 250px;
+            border-radius: 10px;
+            margin: 25px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+        }
+
+        .btn-ui {
+            background-color: var(--primary-color);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            font-weight: bold;
+            font-size: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+    </style>
+    
+    <!-- Script Oficial AdSense / Google Publisher Tag (GPT) -->
+    <script async src="https://doubleclick.net"></script>
+    <script>
+        window.googletag = window.googletag || {cmd: []};
+        let rewardedSlot;
+
+        // Configuração segura do anúncio premiado da Google
+        googletag.cmd.push(() => {
+            // Substitua pelo código do bloco de anúncios premiados gerado no seu painel Google Ads
+            rewardedSlot = googletag.defineRewardedSlot('/1234567/bloco-premiado-exemplo', googletag.enums.OutOfPageFormat.REWARDED);
+            
+            if (rewardedSlot) {
+                rewardedSlot.addService(googletag.pubads());
+                
+                // Ouvinte para detetar quando o utilizador assiste ao anúncio até ao fim
+                googletag.pubads().addEventListener('rewardedSlotGranted', (event) => {
+                    concluirAnuncioEReceberPremio();
+                });
+
+                // Ouvinte para detetar quando o anúncio é fechado
+                googletag.pubads().addEventListener('slotRenderEnded', (event) => {
+                     // Lógica para limpar o ecrã após o fecho do anúncio
+                });
+            }
+            googletag.enableServices();
+        });
+    </script>
+</head>
+<body>
+
+    <header>
+        <h1>🎮 ArcadeClick</h1>
+        <div class="wallet">Saldo: <span id="global-coins">0</span> 🪙</div>
+    </header>
+
+    <div class="layout">
+        <main>
+            <div class="game-window">
+                <h2>Multiplicador de Cliques Ativo</h2>
+                <p style="color: var(--text-muted)">Complete o objetivo de cliques para desbloquear o bónus em vídeo.</p>
+                <h3 style="font-size: 20px;">Cliques: <span id="cycle-clicks" style="color: var(--primary-color);">0</span> / 25</h3>
+                <div class="big-coin" id="coin-target">CLICA!</div>
+            </div>
+        </main>
+
+        <aside>
+            <div class="ad-space">
+                <!-- Espaço para um banner normal do AdSense Display -->
+                <p style="font-size: 12px;">Publicidade AdSense</p>
+            </div>
+        </aside>
+    </div>
+
+    <!-- POP-UP DE ANÚNCIO PREMIADO -->
+    <div class="ad-overlay" id="ad-overlay">
+        <div class="ad-modal">
+            <h2 style="color: var(--secondary-color); margin-top:0;">📺 Vídeo Premiado Requerido</h2>
+            <p>Assista ao anúncio oficial da Google para validar os seus cliques e duplicar o saldo.</p>
+            <div class="google-rewarded-slot">
+                <span id="ad-status-text">A contactar servidores da Google...</span>
+            </div>
+            <button class="btn-ui" id="btn-cancel-ad" style="background-color: var(--danger-color); color: #fff;">CANCELAR</button>
+        </div>
+    </div>
+
+    <script>
+        let globalCoins = 0;
+        let cycleClicks = 0;
+        let isAdShowing = false;
+
+        const globalCoinsEl = document.getElementById('global-coins');
+        const cycleClicksEl = document.getElementById('cycle-clicks');
+        const coinTarget = document.getElementById('coin-target');
+        const adOverlay = document.getElementById('ad-overlay');
+        const adStatusText = document.getElementById('ad-status-text');
+        const btnCancelAd = document.getElementById('btn-cancel-ad');
+
+        function handleCoinClick() {
+            if (isAdShowing) return;
+
+            cycleClicks++;
+            globalCoins += 1;
+            updateUI();
+
+            if (cycleClicks >= 25) {
+                triggerGoogleAd();
+            }
+        }
+
+        function updateUI() {
+            globalCoinsEl.textContent = globalCoins;
+            cycleClicksEl.textContent = cycleClicks;
+        }
+
+        function triggerGoogleAd() {
+            isAdShowing = true;
+            adOverlay.classList.add('show');
+            adStatusText.textContent = "A carregar anúncio premiado...";
+
+            // Dispara a janela oficial de anúncios da Google (GPT)
+            googletag.cmd.push(() => {
+                googletag.display(rewardedSlot);
+                // Nota: A própria Google sobrepõe o vídeo no ecrã inteiro do utilizador
+            });
+        }
+
+        // Esta função só é chamada se a Google confirmar que o utilizador assistiu ao vídeo completo
+        function concluirAnuncioEReceberPremio() {
+            adOverlay.classList.remove('show');
+            globalCoins += 100; // Bónus seguro atribuído
+            cycleClicks = 0;
+            isAdShowing = false;
+            updateUI();
+        }
+
+        btnCancelAd.addEventListener('click', () => {
+            adOverlay.classList.remove('show');
+            isAdShowing = false;
+            cycleClicks = 20; // Penalização ligeira por cancelar, obriga a clicar mais 5 vezes
+            updateUI();
+        });
+
+        coinTarget.addEventListener('click', handleCoinClick);
+    </script>
+</body>
+</html>
