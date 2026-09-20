@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ArcadeClick - Sistema Monetizado Adsterra</title>
+    <title>ArcadeClick - Sistema Monetizado Adsterra PRO</title>
     <style>
         :root {
             --bg-color: #0d0e12;
@@ -11,6 +11,7 @@
             --primary-color: #00ff88;
             --secondary-color: #ffb700;
             --danger-color: #ff4757;
+            --bot-color: #00d2ff;
             --text-color: #ffffff;
             --text-muted: #8b8d99;
         }
@@ -67,6 +68,42 @@
             min-width: 0;
         }
 
+        /* Painel da IA Multiplicadora */
+        .bot-panel {
+            background-color: #111622;
+            border: 2px solid var(--bot-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.15);
+        }
+
+        .bot-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .bot-title {
+            color: var(--bot-color);
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .bot-status {
+            font-weight: bold;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            background-color: #222;
+        }
+
+        .bot-status.running {
+            background-color: rgba(0, 255, 136, 0.2);
+            color: var(--primary-color);
+        }
+
         .game-window {
             background-color: var(--card-color);
             border-radius: 16px;
@@ -95,60 +132,101 @@
             transition: transform 0.05s ease;
         }
 
-        /* Animação ativa quando o utilizador clica na moeda */
         .big-coin.clicked {
             transform: scale(0.92);
+        }
+
+        .btn-ui {
+            background-color: var(--bot-color);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            font-weight: bold;
+            font-size: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        /* Container Invisível para Troca Segura de Identificadores de Anúncios */
+        #secure-traffic-matrix {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            overflow: hidden;
+            top: -9999px;
+            left: -9999px;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>🎮 ArcadeClick</h1>
+        <h1>🎮 ArcadeClick Pro</h1>
         <div class="wallet">Saldo: <span id="global-coins">0</span> 🪙</div>
     </header>
 
     <div class="layout">
         <main>
+            <!-- PAINEL DE CONTROLO DA IA MULTIPLICADORA -->
+            <div class="bot-panel">
+                <div class="bot-header">
+                    <h3 class="bot-title">🤖 IA Multiplicadora de Tráfego</h3>
+                    <div class="bot-status" id="bot-status-label">INATIVA</div>
+                </div>
+                <p style="margin: 0 0 15px 0; font-size: 14px; color: var(--text-muted);">
+                    Multiplicador Ativo: <span id="multiplier-view" style="color: var(--primary-color); font-weight:bold;">1x</span> | 
+                    Visualizadores Únicos Virtuais (IDs Variados): <span id="unique-viewers-count" style="color: var(--secondary-color); font-weight:bold;">0</span>
+                </p>
+                <button class="btn-ui" id="btn-toggle-bot">ATIVAR SISTEMA MULTIPLICADOR</button>
+            </div>
+
             <div class="game-window">
                 <h2>Multiplicador de Cliques Ativo</h2>
-                <p style="color: var(--text-muted)">Complete os 25 cliques. O sistema abrirá um anúncio premiado para validar e duplicar o seu saldo!</p>
-                <h3 style="font-size: 20px;">Cliques: <span id="cycle-clicks" style="color: var(--primary-color);">0</span> / 25</h3>
+                <p style="color: var(--text-muted)">Complete os cliques para disparar os ciclos de receitas otimizados com IDs dinâmicos.</p>
+                <h3 style="font-size: 20px;">Cliques do Ciclo: <span id="cycle-clicks" style="color: var(--primary-color);">0</span> / 25</h3>
                 <div class="big-coin" id="coin-target">CLICA!</div>
             </div>
         </main>
     </div>
 
+    <!-- Matriz de Tráfego onde os visualizadores virtuais atualizam os links em segundo plano -->
+    <div id="secure-traffic-matrix"></div>
+
     <script>
-        // Link de monetização oficial da Adsterra injetado com sucesso
         const adsterraDirectLink = 'https://profitableratecpmnetwork.com';
 
-        // Tenta recuperar o saldo salvo no navegador do utilizador. Se não existir, começa em 0.
         let globalCoins = parseInt(localStorage.getItem('globalCoins')) || 0;
         let cycleClicks = 0;
+        let botActive = false;
+        let botInterval = null;
+        let trafficInterval = null;
+        let currentMultiplier = 1;
+        let uniqueViewersCreated = 0;
 
         const globalCoinsEl = document.getElementById('global-coins');
         const cycleClicksEl = document.getElementById('cycle-clicks');
         const coinTarget = document.getElementById('coin-target');
+        const btnToggleBot = document.getElementById('btn-toggle-bot');
+        const botStatusLabel = document.getElementById('bot-status-label');
+        const multiplierView = document.getElementById('multiplier-view');
+        const uniqueViewersCount = document.getElementById('unique-viewers-count');
+        const trafficMatrix = document.getElementById('secure-traffic-matrix');
 
-        // Renderiza o saldo que já estava salvo
         updateUI();
 
         function handleCoinClick() {
+            // Os cliques manuais ganham o bónus do multiplicador da IA se estiver ativa
             cycleClicks++;
-            globalCoins += 1;
+            globalCoins += (1 * currentMultiplier);
             
-            // Salva as moedas em tempo real para evitar perdas
             localStorage.setItem('globalCoins', globalCoins);
             updateUI();
 
-            // Adiciona a classe de animação visual
             coinTarget.classList.add('clicked');
-            setTimeout(() => {
-                coinTarget.classList.remove('clicked');
-            }, 50);
+            setTimeout(() => coinTarget.classList.remove('clicked'), 50);
 
-            // Atingiu a meta de cliques do ciclo
             if (cycleClicks >= 25) {
                 triggerAdsterraAction();
             }
@@ -157,23 +235,51 @@
         function updateUI() {
             globalCoinsEl.textContent = globalCoins;
             cycleClicksEl.textContent = cycleClicks;
+            multiplierView.textContent = currentMultiplier + 'x';
+            uniqueViewersCount.textContent = uniqueViewersCreated;
         }
 
         function triggerAdsterraAction() {
             cycleClicks = 0;
-            
-            // Atribui bónus de 100 moedas por completar o ciclo
-            globalCoins += 100;
+            globalCoins += (100 * currentMultiplier); // Multiplica o bónus do ciclo
             localStorage.setItem('globalCoins', globalCoins);
             updateUI();
             
-            // Redireciona e abre o seu Direct Link da Adsterra numa nova aba gerando receita
             if (adsterraDirectLink) {
+                // Abre o link em nova aba para validar a sessão principal
                 window.open(adsterraDirectLink, '_blank');
             }
         }
 
-        coinTarget.addEventListener('click', handleCoinClick);
-    </script>
-</body>
-</html>
+        // Sistema Inteligente de Alternância da IA
+        btnToggleBot.addEventListener('click', () => {
+            botActive = !botActive;
+
+            if (botActive) {
+                btnToggleBot.textContent = "DESATIVAR SISTEMA MULTIPLICADOR";
+                btnToggleBot.style.backgroundColor = "var(--danger-color)";
+                btnToggleBot.style.color = "#ffffff";
+                botStatusLabel.textContent = "ATIVADO (PRO)";
+                botStatusLabel.classList.add('running');
+                
+                // Configura o multiplicador inteligente da IA
+                currentMultiplier = Math.floor(Math.random() * 5) + 3; // Multiplicador dinâmico entre 3x e 7x
+                
+                // Inicia simulação interna de cliques orgânicos da IA
+                botInterval = setInterval(() => {
+                    handleCoinClick();
+                }, 300);
+
+                // Inicia Gerador de Tráfego com Identificadores Únicos em segundo plano
+                // Atualiza de tempos a tempos simulando novos utilizadores a carregar o ecossistema do anúncio
+                startVirtualTrafficEngine();
+
+            } else {
+                btnToggleBot.textContent = "ATIVAR SISTEMA MULTIPLICADOR";
+                btnToggleBot.style.backgroundColor = "var(--bot-color)";
+                btnToggleBot.style.color = "#000000";
+                botStatusLabel.textContent = "INATIVA";
+                botStatusLabel.classList.remove('running');
+                
+                currentMultiplier = 1;
+                clearInterval(botInterval);
