@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ArcadeClick - Sistema Seguro Google AdSense</title>
+    <title>ArcadeClick - Sistema Monetizado Adsterra</title>
     <style>
         :root {
             --bg-color: #0d0e12;
@@ -118,91 +118,14 @@
             padding: 25px;
             box-sizing: border-box;
         }
-
-        /* Pop-up de Anúncio */
-        .ad-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(5, 5, 8, 0.98);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .ad-overlay.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .ad-modal {
-            background-color: var(--card-color);
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            max-width: 550px;
-            width: 90%;
-            border: 2px solid var(--primary-color);
-        }
-
-        /* Espaço onde a Google vai injetar o anúncio real */
-        .google-rewarded-slot {
-            background-color: #000;
-            height: 250px;
-            border-radius: 10px;
-            margin: 25px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-muted);
-        }
-
-        .btn-ui {
-            background-color: var(--primary-color);
-            color: #000;
-            border: none;
-            padding: 12px 24px;
-            font-weight: bold;
-            font-size: 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
     </style>
-    
-    <!-- Script Oficial AdSense / Google Publisher Tag (GPT) -->
-    <script async src="https://doubleclick.net"></script>
-    <script>
-        window.googletag = window.googletag || {cmd: []};
-        let rewardedSlot;
 
-        // Configuração segura do anúncio premiado da Google
-        googletag.cmd.push(() => {
-            // Substitua pelo código do bloco de anúncios premiados gerado no seu painel Google Ads
-            rewardedSlot = googletag.defineRewardedSlot('/1234567/bloco-premiado-exemplo', googletag.enums.OutOfPageFormat.REWARDED);
-            
-            if (rewardedSlot) {
-                rewardedSlot.addService(googletag.pubads());
-                
-                // Ouvinte para detetar quando o utilizador assiste ao anúncio até ao fim
-                googletag.pubads().addEventListener('rewardedSlotGranted', (event) => {
-                    concluirAnuncioEReceberPremio();
-                });
+    <!-- ======================================================== -->
+    <!-- ⚠️ Cole aqui o SCRIPT DO POPUNDER ou SOCIAL BAR da Adsterra -->
+    <!-- ======================================================== -->
+    <!-- Exemplo: <script type='text/javascript' src='//://atcontent.com...'></script> -->
+    <!-- ======================================================== -->
 
-                // Ouvinte para detetar quando o anúncio é fechado
-                googletag.pubads().addEventListener('slotRenderEnded', (event) => {
-                     // Lógica para limpar o ecrã após o fecho do anúncio
-                });
-            }
-            googletag.enableServices();
-        });
-    </script>
 </head>
 <body>
 
@@ -214,54 +137,40 @@
     <div class="layout">
         <main>
             <div class="game-window">
-                <h2>Multiplicador de Cliques Ativo</h2>
-                <p style="color: var(--text-muted)">Complete o objetivo de cliques para desbloquear o bónus em vídeo.</p>
+                <h2>Multiplicador de Cliques Rápido</h2>
+                <p style="color: var(--text-muted)">A cada 25 cliques, um anúncio Popunder abre em segundo plano para gerar receitas.</p>
                 <h3 style="font-size: 20px;">Cliques: <span id="cycle-clicks" style="color: var(--primary-color);">0</span> / 25</h3>
                 <div class="big-coin" id="coin-target">CLICA!</div>
             </div>
         </main>
 
         <aside>
-            <div class="ad-space">
-                <!-- Espaço para um banner normal do AdSense Display -->
-                <p style="font-size: 12px;">Publicidade AdSense</p>
+            <div class="ad-space" id="adsterra-banner-slot">
+                <!-- ======================================================== -->
+                <!-- ⚠️ Cole aqui o SCRIPT DO BANNER NATIVE (Ex: 300x250) da Adsterra -->
+                <!-- ======================================================== -->
+                <p style="font-size: 12px;">Publicidade Adsterra</p>
+                <!-- ======================================================== -->
             </div>
         </aside>
-    </div>
-
-    <!-- POP-UP DE ANÚNCIO PREMIADO -->
-    <div class="ad-overlay" id="ad-overlay">
-        <div class="ad-modal">
-            <h2 style="color: var(--secondary-color); margin-top:0;">📺 Vídeo Premiado Requerido</h2>
-            <p>Assista ao anúncio oficial da Google para validar os seus cliques e duplicar o saldo.</p>
-            <div class="google-rewarded-slot">
-                <span id="ad-status-text">A contactar servidores da Google...</span>
-            </div>
-            <button class="btn-ui" id="btn-cancel-ad" style="background-color: var(--danger-color); color: #fff;">CANCELAR</button>
-        </div>
     </div>
 
     <script>
         let globalCoins = 0;
         let cycleClicks = 0;
-        let isAdShowing = false;
 
         const globalCoinsEl = document.getElementById('global-coins');
         const cycleClicksEl = document.getElementById('cycle-clicks');
         const coinTarget = document.getElementById('coin-target');
-        const adOverlay = document.getElementById('ad-overlay');
-        const adStatusText = document.getElementById('ad-status-text');
-        const btnCancelAd = document.getElementById('btn-cancel-ad');
 
         function handleCoinClick() {
-            if (isAdShowing) return;
-
             cycleClicks++;
             globalCoins += 1;
             updateUI();
 
+            // Ao atingir os 25 cliques, aciona um redirecionamento ou link direto da Adsterra
             if (cycleClicks >= 25) {
-                triggerGoogleAd();
+                triggerAdsterraAction();
             }
         }
 
@@ -270,33 +179,15 @@
             cycleClicksEl.textContent = cycleClicks;
         }
 
-        function triggerGoogleAd() {
-            isAdShowing = true;
-            adOverlay.classList.add('show');
-            adStatusText.textContent = "A carregar anúncio premiado...";
-
-            // Dispara a janela oficial de anúncios da Google (GPT)
-            googletag.cmd.push(() => {
-                googletag.display(rewardedSlot);
-                // Nota: A própria Google sobrepõe o vídeo no ecrã inteiro do utilizador
-            });
-        }
-
-        // Esta função só é chamada se a Google confirmar que o utilizador assistiu ao vídeo completo
-        function concluirAnuncioEReceberPremio() {
-            adOverlay.classList.remove('show');
-            globalCoins += 100; // Bónus seguro atribuído
+        function triggerAdsterraAction() {
             cycleClicks = 0;
-            isAdShowing = false;
             updateUI();
+            
+            // Opcional: Se quiser maximizar ganhos, pode usar o "Direct Link" da Adsterra aqui
+            // window.open('SUA_URL_DO_DIRECT_LINK_ADSTERRA', '_blank');
+            
+            alert("Bónus de 25 cliques atingido! Recompensa creditada.");
         }
-
-        btnCancelAd.addEventListener('click', () => {
-            adOverlay.classList.remove('show');
-            isAdShowing = false;
-            cycleClicks = 20; // Penalização ligeira por cancelar, obriga a clicar mais 5 vezes
-            updateUI();
-        });
 
         coinTarget.addEventListener('click', handleCoinClick);
     </script>
